@@ -1,0 +1,4 @@
+[submodule "lib/lovemidi"]
+	path = lib/lovemidi
+	url = https://github.com/jdeeny/lovemidi.git
+	ignore = dirty
