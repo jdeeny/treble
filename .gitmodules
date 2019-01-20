@@ -5,3 +5,6 @@
 [submodule "lib/middleclass"]
 	path = lib/middleclass
 	url = https://github.com/kikito/middleclass.git
+[submodule "lib/lume"]
+	path = lib/lume
+	url = https://github.com/rxi/lume.git
