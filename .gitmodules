@@ -2,3 +2,6 @@
 	path = lib/lovemidi
 	url = https://github.com/jdeeny/lovemidi.git
 	ignore = dirty
+[submodule "lib/middleclass"]
+	path = lib/middleclass
+	url = https://github.com/kikito/middleclass.git
