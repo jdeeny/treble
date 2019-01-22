@@ -1,4 +1,4 @@
-package.path = "../?.lua;" .. package.path
+package.path = "../?.so;" .. package.path
 local midi = require 'luamidi'
 
 local bit = require 'bit'
