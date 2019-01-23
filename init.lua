@@ -1,4 +1,6 @@
-package.cpath = "../?.so;" .. package.path
+package.cpath = "lib/lovemidi/?.so;" .. package.cpath
+package.cpath = "lib/treble/lib/lovemidi/?.so;" .. package.cpath
+
 local midi = require 'luamidi'
 
 local bit = require 'bit'
