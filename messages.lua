@@ -1,4 +1,4 @@
-local class = require 'lib.middleclass'
+local class = require 'lib.middleclass.middleclass'
 
 local Messages = {}
 
