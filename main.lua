@@ -1,11 +1,22 @@
-treble = require '.'
+local Treble = require '.'
 
---local t = treble:new(2,2)
+local xtouch
 
-for n, p in pairs(treble.inPorts('MINI')) do
-  print(n .. " " .. p)
+function love.load()
+  for n, p in pairs(Treble.inPorts('MINI')) do
+    print(n .. " " .. p)
+  end
+
+  for n, p in pairs(Treble.outPorts('MINI')) do
+    print(n .. " " .. p)
+  end
+
+  xtouch = Treble:new(1, 1)
+
 end
 
-for n, p in pairs(treble.outPorts('MINI')) do
-  print(n .. " " .. p)
+function love.update(dt)
+end
+
+function love.draw()
 end
