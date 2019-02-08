@@ -12,8 +12,8 @@ local Dispatcher = require('dispatcher')
 local Treble = class('Treble')
 
 function Treble:initialize(inport, outport)
-  self.inport = inport and midi.getinportcount() > inport or nil
-  self.outport = outport and midi.getoutportcount() > outport or nil
+  if midi.getinportcount() > inport then self.inport = inport else self.inport = nil end
+  if midi.getoutportcount() > outport then self.outport = outport else self.outport = nil end
   self.state = { system={{},{}}, channel={{},{}}, }
   self.callbacks = { __mode='kv' }
 end
@@ -74,6 +74,7 @@ _processors[M_NOTEON] = _noteOn
 
 function Treble:processInput(port, control, velocity, _delta)
   if port then
+    print(control, velocity, _delta)
     local kind = port_to_kind(port)
     if _processors[kind] then _processors[kind](port, control, velocity) end
   end
