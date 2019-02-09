@@ -6,12 +6,12 @@ local function create_treble(port_match_string)
   local input, output
   for n, p in pairs(Treble.inPorts(port_match_string)) do
     input = n
-    print("Input '" .. p .. "' found for " .. "'" .. port_match_string .. "")
+    print("Input '" .. p .. "' found for " .. "'" .. port_match_string .. "'")
   end
 
   for n, p in pairs(Treble.outPorts(port_match_string)) do
   	output = n
-    print("Output '" .. p .. "' found for " .. "'" .. port_match_string .. "")
+    print("Output '" .. p .. "' found for " .. "'" .. port_match_string .. "'")
   end
 
   if input and output then
@@ -28,9 +28,14 @@ local function create_treble(port_match_string)
 end
 
 function love.load()
+	print("Input Ports:")
+	for n,p in pairs(Treble.inPorts('')) do print("    " .. p) end
+	print("Output Ports:")
+	for n,p in pairs(Treble.outPorts('')) do print("    " .. p) end
+	print()
 	xtouch = create_treble('MINI')
   worlde = create_treble('WORLDE')
-  virmid = create_treble('28:0')
+  virmid = create_treble('14:0')
 
 end
 
