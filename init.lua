@@ -31,11 +31,10 @@ end
 function Treble.inPorts(name) return _filter_ports(midi.enumerateinports(), name) end
 function Treble.outPorts(name) return _filter_ports(midi.enumerateoutports(), name) end
 
-
 function Treble:update(dt)
   if self.inport then
     repeat
-      self:processInput(midi.getMessage(self.inport))
+        self:processInput(midi.getMessage(self.inport))
     until not port
   end
 end
@@ -74,7 +73,7 @@ _processors[M_NOTEON] = _noteOn
 
 function Treble:processInput(port, control, velocity, _delta)
   if port then
-    print(control, velocity, _delta)
+    print(port, control, velocity, _delta)
     local kind = port_to_kind(port)
     if _processors[kind] then _processors[kind](port, control, velocity) end
   end

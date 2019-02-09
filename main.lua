@@ -1,6 +1,8 @@
 local Treble = require '.'
 
 local xtouch
+local worlde
+local virmid
 
 local function create_treble(port_match_string)
   local input, output
