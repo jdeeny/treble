@@ -35,7 +35,9 @@ function Treble.outPorts(name) return _filter_ports(midi.enumerateoutports(), na
 function Treble:update(dt)
   if self.inport then
     repeat
-      self:processInput(midi.getMessage(self.inport))
+      local msg = midi.getMessage(self.inport)
+      if msg then print(msg);self:processInput(msg) end
+      
     until not port
   end
 end
