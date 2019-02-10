@@ -12,10 +12,35 @@ local Dispatcher = require('dispatcher')
 local Treble = class('Treble')
 
 function Treble:initialize(inport, outport)
-  if midi.getinportcount() > inport then self.inport = inport else self.inport = nil end
-  if midi.getoutportcount() > outport then self.outport = outport else self.outport = nil end
+  if inport and midi.getinportcount() > inport then self.inport = inport else self.inport = nil end
+  if outport and midi.getoutportcount() > outport then self.outport = outport else self.outport = nil end
   self.state = { system={{},{}}, channel={{},{}}, }
   self.callbacks = { __mode='kv' }
+end
+
+function Treble.get_io_ports( port_match_string )
+  local input, output
+  for n, p in pairs(Treble.inPorts(port_match_string)) do
+    input = n
+    print("Input '" .. p .. "' found for " .. "'" .. port_match_string .. "'")
+  end
+
+  for n, p in pairs(Treble.outPorts(port_match_string)) do
+    output = n
+    print("Output '" .. p .. "' found for " .. "'" .. port_match_string .. "'")
+  end
+
+  if input and output then
+    return input, output
+  else
+    if input == nil then
+      print("No input found for '" .. port_match_string .. "'")
+    end
+    if output == nil then
+      print("No output found for '" .. port_match_string .. "'")
+    end
+    return nil,nil
+  end
 end
 
 local function _filter_ports(ports, name)
