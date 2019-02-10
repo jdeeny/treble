@@ -62,7 +62,7 @@ local function _noteOff(self, ch, key, vel)
   until #kind == 1
 end
 
-local function _noteOn(self, ch, key, velocity)
+local function _noteOn(self, ch, key, value)
   if not self.channel[ch] then self.channel[ch] = {} end
   self.channel[ch][key] = { 'on', vel }
 end
@@ -71,11 +71,11 @@ local _processors = {}
 _processors[M_NOTEOFF] = _noteOff
 _processors[M_NOTEON] = _noteOn
 
-function Treble:processInput(port, control, velocity, _delta)
+function Treble:processInput(port, control, value, _delta)
   if port then
-    print(port, control, velocity, _delta)
     local kind = port_to_kind(port)
-    if _processors[kind] then _processors[kind](port, control, velocity) end
+    print("port:"..port, "kind:"..kind, "control:"..control, "value:"..value, "_delta:".._delta)
+    if _processors[kind] then _processors[kind](port, control, value) end
   end
 end
 
