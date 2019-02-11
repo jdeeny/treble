@@ -43,6 +43,40 @@ function Treble.get_io_ports( port_match_string )
   end
 end
 
+
+-- loads the controls into an elements table.
+-- the elements table has a table for each type of midi signal, each of which
+-- is an array with the lookup of the channel/note/etc. That will get you
+-- the configuration for the control so you know how to handle it as well as
+-- callbacks, etc.
+function Treble:load_controls(control_config)
+  self.control_config = control_config
+  self.elements = {}
+  self.controls = {}
+
+  for element,conf in pairs(self.control_config) do
+    -- print(element,conf)
+    if conf.control then
+      if not self.elements.control_changes then self.elements.control_changes={} end
+      
+      self.elements.control_changes[conf.control] = conf
+      self.elements.control_changes[conf.control].value = nil
+      self.controls[element] = conf
+
+    elseif conf.note then
+      if not self.elements.notes then self.elements.notes={} end
+      
+      self.elements.notes[conf.note] = conf
+    
+    end
+  end
+end
+
+-- returns the current valut of the element
+function Treble:get( element )
+  return self.controls[element].value
+end
+
 local function _filter_ports(ports, name)
   local result = {}
   for n, p in pairs(ports) do
@@ -64,10 +98,13 @@ function Treble:update(dt)
   end
 end
 
-local function port_to_kind(port)
-  return bit.band(bit.rshift(port, 4), 7)   -- 1kkk nnnn
-end
 
+
+-- PROCESSORS
+-- They process the different midi message types
+-- this is where and and all massage magic happens
+
+-- the kinds of processors
 local M_NOTEOFF = 0
 local M_NOTEON = 1
 local M_KEYPRESSURE = 2
@@ -92,15 +129,41 @@ local function _noteOn(self, ch, key, value)
   self.channel[ch][key] = { 'on', vel }
 end
 
+local function _controlChange(self, _port, control, value )
+  local conf = self.elements.control_changes[control]
+  if conf then
+    local last_val = self.elements.control_changes[control].value
+    local new_val = nil
+    if conf.type == 'button' then
+      new_val = bit.band(bit.rshift(value, 6), 1)
+      if last_val == nil and new_val == 0 and conf.on_release then conf.on_release() end
+      if last_val == nil and new_val == 1 and conf.on_press then conf.on_press() end
+      if last_val == 0 and new_val == 1 and conf.on_press then conf.on_press() end
+      if last_val == 1 and new_val == 0 and conf.on_release then conf.on_release() end
+    elseif conf.type == 'fader' or conf.type == 'knob' then
+      new_val = value
+      if conf.on_change then conf.on_change(new_val) end
+    end
+    self.elements.control_changes[control].value = new_val
+  else
+    print("Control " .. control .. " not configured.")
+  end
+end
+
 local _processors = {}
 _processors[M_NOTEOFF] = _noteOff
 _processors[M_NOTEON] = _noteOn
+_processors[M_CONTROLCHANGE] = _controlChange
+
+local function port_to_processor_kind(port)
+  return bit.band(bit.rshift(port, 4), 7)   -- 1kkk nnnn
+end
 
 function Treble:processInput(port, control, value, _delta)
   if port then
-    local kind = port_to_kind(port)
-    print("port:"..port, "kind:"..kind, "control:"..control, "value:"..value, "_delta:".._delta)
-    if _processors[kind] then _processors[kind](port, control, value) end
+    local kind = port_to_processor_kind(port)
+    -- print("port:"..port, "kind:"..kind, "control:"..control, "value:"..value, "_delta:".._delta)
+    if _processors[kind] then _processors[kind](self, port, control, value) end
   end
 end
 
